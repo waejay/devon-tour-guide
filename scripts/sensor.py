@@ -31,6 +31,10 @@ class Sensor:
         '''Retrieves Odometry topic's data'''
         self.odom = odom_msg
 
+    def bumper_callback(self, bumper_msg):
+        '''Retrieves Bumper topics' data'''
+        self.bumper = bumper_msg
+
     def get_laser_values(self):
         '''Returns an array of laser values'''
         return self.lasers

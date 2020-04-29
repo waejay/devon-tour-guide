@@ -23,6 +23,7 @@ class Controller:
     def idle_mode(self):
         rospy.loginfo("Initalizing Idle mode.")
         while not rospy.is_shutdown():
+
             self.motion.rotate_right()
 
     def tour_guide_mode(self):

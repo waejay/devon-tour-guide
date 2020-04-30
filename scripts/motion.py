@@ -46,6 +46,10 @@ class Motion:
         self.velocity.angular.z = AngularSpeed.NONE
         self.publish()
 
+    def halt_rotation(self):
+        self.velocity.angular.z = AngularSpeed.NONE
+        self.publish()
+
     #  -------------- Linear Motion ------------------
 
     def move_forward(self, speed = LinearSpeed.NORMAL):
@@ -65,5 +69,30 @@ class Motion:
     def rotate_right(self, speed = AngularSpeed.NORMAL):
         self.velocity.angular.z = -1 * speed
         self.publish()
+
+    def rotate_180(self, speed = AngularSpeed.NORMAL):
+
+        self.velocity.linear.x = LinearSpeed.NONE
+        self.velocity.angular.z = speed
+
+        # Set current time for distance calculus
+        t0 = rospy.Time.now().to_sec()
+        current_angle = 0
+
+        # Rotate until turned 3.14 rad/180 deg
+        while (current_angle < 3.14):
+            self.publish()
+            t1 = rospy.Time.now().to_sec()
+            current_angle = abs(speed)*(t1-t0)
+
+        # Halt motion after angle has been met
+        self.halt()
+
+
+
+
+
+
+
 
 

@@ -8,13 +8,16 @@ from nav_msgs.msg import Odometry       # Positional data relative to Turtlebot
 
 from kobuki_msgs.msg import BumperEvent # Bumper sensor
 
+class Distance:
+    FOOT = 0.308    # 0.308 m = 1 foot
+
 class Sensor:
 
     def __init__(self):
 
         self.lasers = None      # Array of Hokuyo lasers
         self.odom = None        # Odometry
-	self.bumper = None 	# Bumper sensor
+	self.bumper = None      # Bumper sensor
 
         self.subscribe()
 
@@ -37,16 +40,20 @@ class Sensor:
 
     def get_laser_values(self):
         '''Returns an array of laser values'''
-        return self.lasers
+        if self.lasers:
+            return self.lasers
 
     def get_left_laser_value(self):
-        return self.lasers.ranges[250]
+        if self.lasers:
+            return self.lasers.ranges[250]
 
     def get_mid_laser_value(self):
-        return self.lasers.ranges[180]
+        if self.lasers:
+            return self.lasers.ranges[180]
 
     def get_right_laser_value(self):
-        return self.lasers.ranges[110]
+        if self.lasers:
+            return self.lasers.ranges[110]
 
     def get_position(self):
         x = self.odom.pose.pose.position.x
@@ -54,7 +61,19 @@ class Sensor:
 
         return (x,y)
 
-	
+    def is_obstacle_detected(self):
+        '''Check if an obstacle is 1 ft in front
+           or 1/2 ft on either side of Turtlebot
+        '''
+        if self.get_mid_laser_value() <= Distance.FOOT:
+            return True
+        elif self.get_right_laser_value() <= Distance.FOOT * 2:
+            return True
+        elif self.get_left_laser_value() <= Distance.FOOT * 2:
+            return True
+
+        return False
+
     def is_bumped(self):
 	''' Return the bumper when bumped'''
 	if self.bumper.state == BumperEvent.PRESSED:

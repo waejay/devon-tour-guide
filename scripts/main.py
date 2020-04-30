@@ -16,6 +16,8 @@ class Controller:
         self.name = "Controller object"
         self.rate = rospy.Rate(10)          # allow node to 'spin' at 10hz
 
+        rospy.on_shutdown(self.shutdown)    # calls this function when Ctrl+C
+
         self.motion = Motion()
         self.sensor = Sensor()
         self.localizer = Localizer()
@@ -23,7 +25,7 @@ class Controller:
     def idle_mode(self):
         rospy.loginfo("Initalizing Idle mode.")
         while not rospy.is_shutdown():
-
+            rospy.loginfo(self.sensor.get_mid_laser_value)
             self.motion.rotate_right()
 
     def tour_guide_mode(self):
@@ -43,7 +45,16 @@ class Controller:
         # TODO: for now, it will be 'casually walking around'
         self.idle_mode()
 
+    def shutdown(self):
+        rospy.loginfo("Stopping Turtlebot")
+        self.motion.halt()
+        rospy.sleep(1)          # ensures Turtlebot received the command before
+                                # shutting down script
 
 if __name__ == '__main__':
     controller = Controller()
-    controller.start()
+
+    try:
+        controller.start()
+    except:
+        rospy.loginfO("Controller node terminated.")

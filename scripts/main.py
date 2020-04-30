@@ -55,7 +55,6 @@ class Controller:
 
             self.motion.move_forward()
 
-
     def tour_guide_mode(self):
         rospy.loginfo("Initializing Tour Guide mode.")
 

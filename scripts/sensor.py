@@ -22,7 +22,7 @@ class Sensor:
         self.subscribe()
 
     def subscribe(self):
-        rospy.Subscriber('/laserscan', LaserScan, self.laserscan_callback)
+        rospy.Subscriber('/scan', LaserScan, self.laserscan_callback)
         rospy.Subscriber('/odom', Odometry, self.odom_callback)
 	rospy.Subscriber('/mobile_base/events/bumper', BumperEvent, self.bumper_callback)
 
@@ -45,15 +45,15 @@ class Sensor:
 
     def get_left_laser_value(self):
         if self.lasers:
-            return self.lasers.ranges[250]
+            return self.lasers.ranges[480]
 
     def get_mid_laser_value(self):
         if self.lasers:
-            return self.lasers.ranges[180]
+            return self.lasers.ranges[320]
 
     def get_right_laser_value(self):
         if self.lasers:
-            return self.lasers.ranges[110]
+            return self.lasers.ranges[160]
 
     def get_position(self):
         x = self.odom.pose.pose.position.x

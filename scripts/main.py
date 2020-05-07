@@ -67,11 +67,11 @@ class Controller:
 		rospy.loginfo("'1': Point To Point")
 		rospy.loginfo("'2': Regular Tour")
 		begin = input()
-	
-		if (begin == 1)
-			self.point_to_point_mode()
-		elif (begin == 2)
-			self.tour_guide_mode()
+
+	if (begin == 1)
+		self.point_to_point_mode()
+	elif (begin == 2)
+		self.tour_guide_mode()
 		
 
     def idle_mode(self):
@@ -98,7 +98,7 @@ class Controller:
 
 	''' User chooses which highlights to go to'''
     def point_to_point_mode(self):
-		choice = self.choose()	
+	choice = self.choose()	
 
 		# Depending on which highlight the user chooses, the robot will
 		# move to the goal
@@ -108,8 +108,7 @@ class Controller:
 			self.goalReached = self.moveToGoal(self.xAtrium, self.yAtrium)
 		elif (choice == 2)
 			self.goalReached = self.moveToGoal(self.xEastEntrance, self.yEastEntrance)
-
-		# if choice isn't q and the robot reached its goal
+			# if choice isn't q and the robot reached its goal
 		if (choice != 'q'):
 			if (self.goalReached):
 				rospy.loginfo("Reached highlight!")
@@ -119,13 +118,13 @@ class Controller:
 
 		# Loop to keep going until user quits the tour
 		while choice != 'q':
-			choice = self.choose()
+		choice = self.choose()
 			if (choice == 0)
-            	self.goalReached = self.moveToGoal(self.xCsOffice, self.yCsOffice)
-        	elif (choice == 1)
-            	self.goalReached = self.moveToGoal(self.xAtrium, self.yAtrium)
-        	elif (choice == 2)
-            	self.goalReached = self.moveToGoal(self.xEastEntrance, self.yEastEntrance)
+       	    	self.goalReached = self.moveToGoal(self.xCsOffice, self.yCsOffice)
+       	 	elif (choice == 1)
+       	    	self.goalReached = self.moveToGoal(self.xAtrium, self.yAtrium)
+       	 	elif (choice == 2)
+           		self.goalReached = self.moveToGoal(self.xEastEntrance, self.yEastEntrance)
 
 
 	''' User chooses where they would like to start the tour'''
@@ -139,8 +138,8 @@ class Controller:
         rospy.loginfo("'q': Quit")
 		
 
-		choice = input()
-		return choice
+		tour = input()
+		return tour
 
 	# TODO: Chris - I copied this from the gaitech "Map-Based Navigation" websitfor inspiration hoping that this code base could miracuously work for our project. I think this could give a head-start on what we'd have to do for P2P at least
 	def moveToGoal(self,xGoal,yGoal):

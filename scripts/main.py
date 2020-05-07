@@ -25,18 +25,18 @@ class Controller:
         self.sensor = Sensor()
         self.localizer = Localizer()
 
-		# Highlight coordinates
-		self.xWestEntrance = -10.5329
-		self.yWestEntrance = -3.8948
-		self.xEastEntrance = 12.3739
-		self.yEastEntrance = -3.7555
-		self.xCsOffice = -6.3712
-		self.yCsOffice = 2.5169
-		self.xAtrium = 3.5468
-		self.yAtrium = -4.2581
+        # Highlight coordinates
+        self.xWestEntrance = -10.5329
+        self.yWestEntrance = -3.8948
+        self.xEastEntrance = 12.3739
+        self.yEastEntrance = -3.7555
+        self.xCsOffice = -6.3712
+        self.yCsOffice = 2.5169
+        self.xAtrium = 3.5468
+        self.yAtrium = -4.2581
 
-		# Boolean for reached goal
-		self.goalReached = False
+        # Boolean for reached goal
+        self.goalReached = False
 
     def start(self):
         rospy.loginfo("Starting Tour Guide..")

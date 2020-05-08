@@ -7,6 +7,8 @@ from motion import Motion
 from sensor import Sensor, Distance
 from localizer import Localizer
 import actionlib
+from actionlib_msgs.msg import *
+from geometry_msgs.msg import Point
 
 class Controller:
     '''Driver class for controlling tour guide's hybrid paradigm'''
@@ -24,6 +26,7 @@ class Controller:
         self.sensor = Sensor()
         self.localizer = Localizer()
 
+        ''' TODO: old highlights, remove if needed
         # Highlight coordinates
         self.xWestEntrance = -10.5329
         self.yWestEntrance = -3.8948
@@ -33,6 +36,17 @@ class Controller:
         self.yCsOffice = 2.5169
         self.xAtrium = 3.5468
         self.yAtrium = -4.2581
+        '''
+
+        # Highlight coordinates based on amcl_pose + rviz
+        self.xWestEntrance = 8.888
+        self.yWestEntrance = 3.4802
+        self.xEastEntrance = 14.7042
+        self.yEastEntrance = -14.4308
+        self.xCsOffice = 15.4548
+        self.yCsOffice = 2.2821
+        self.xAtrium = 10.4148
+        self.yAtrium = -0.9555
 
         # Boolean for reached goal
         self.goalReached = False
@@ -56,7 +70,7 @@ class Controller:
 		# for demo purposes. As soon as the program starts, we can ask the user
 		# if they would like a P2P or a regular tour
 		# then go from there
-        self.idle_mode()
+        # self.idle_mode()
 
 		# TODO: Chris -  I think it will also be easier if we just have the robot
 		# start the tour at its initial position which is at the West Entrance
@@ -108,11 +122,11 @@ class Controller:
 
 	# if choice isn't q and the robot reached its goal
 	if (choice != 'q'):
-		if (self.goalReached):
-                    rospy.loginfo("Reached highlight!")
-		# If it fails to reach the goal
-		else:
-                    rospy.loginfo("Couldn't reach the highlight, try again")
+            if (self.goalReached):
+                rospy.loginfo("Reached highlight!")
+            # If it fails to reach the goal
+            else:
+                rospy.loginfo("Couldn't reach the highlight, try again")
 
 		# Loop to keep going until user quits the tour
 	while choice != 'q':

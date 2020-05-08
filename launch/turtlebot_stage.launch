@@ -1,0 +1,9 @@
+<launch>
+	<arg name="base"	value="$(optenv TURTLEBOT_BASE kobuki)"/>
+	<arg name="stacks"    value="$(optenv TURTLEBOT_STACKS hexagons)"/>  <!-- circles, hexagons -->
+	<arg name="3d_sensor" value="$(optenv TURTLEBOT_3D_SENSOR kinect)"/>
+
+	<arg name="map_file" 	default=" $(find devon-tour-guide)/src/buildings/devon_v2.yaml"/>
+	<arg name="world_file"	default=" $(find devon-tour-guide)/src/worlds/devon1st.world"/>
+</launch>
+	

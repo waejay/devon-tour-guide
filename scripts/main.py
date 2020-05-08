@@ -113,11 +113,11 @@ class Controller:
 
 	# Depending on which highlight the user chooses, the robot will
 	# move to the goal
-        if (choice == 0):
+        if (choice == 1):
             self.goalReached = self.moveToGoal(self.xCsOffice, self.yCsOffice)
-        elif (choice == 1):
-            self.goalReached = self.moveToGoal(self.xAtrium, self.yAtrium)
         elif (choice == 2):
+            self.goalReached = self.moveToGoal(self.xAtrium, self.yAtrium)
+        elif (choice == 3):
             self.goalReached = self.moveToGoal(self.xEastEntrance, self.yEastEntrance)
 
 	# if choice isn't q and the robot reached its goal
@@ -131,11 +131,11 @@ class Controller:
 		# Loop to keep going until user quits the tour
 	while choice != 'q':
             choice = self.choose()
-            if (choice == 0):
+            if (choice == 1):
                 self.goalReached = self.moveToGoal(self.xCsOffice, self.yCsOffice)
-            elif (choice == 1):
-                self.goalReached = self.moveToGoal(self.xAtrium, self.yAtrium)
             elif (choice == 2):
+                self.goalReached = self.moveToGoal(self.xAtrium, self.yAtrium)
+            elif (choice == 3):
                 self.goalReached = self.moveToGoal(self.xEastEntrance, self.yEastEntrance)
 
 

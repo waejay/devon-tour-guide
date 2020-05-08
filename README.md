@@ -17,7 +17,8 @@ to create a backup.
 
 # How to Run
 
-The launch file will execute three ROS commands and a Python script that will
+The launch file (`/launch/turtlebot_stage.launch` or `roslaunch
+devon_tour_guide turtlebot_stage.launch`) will execute three ROS commands and a Python script that will
 serve the main functions of the P2P guide and Tour guide. These commands are
 (in order):
 

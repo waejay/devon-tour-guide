@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 import rospy
+import math
 
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from motion import Motion
@@ -9,6 +10,15 @@ from localizer import Localizer
 import actionlib
 from actionlib_msgs.msg import *
 from geometry_msgs.msg import Point
+from enum import Enum
+
+class Locations():
+    WestEntrance = Point(8.8748, 3.5034, 0)
+    EastEntrance = Point(14.7042, -14.4308, 0)
+    CSOffice = Point(15.4548, 2.2821, 0)
+    Atrium = Point(10.4148, -0.9555, 0)
+    ComputerLab = Point(14.0525, -11.699, 0)
+    ElectronicsLab = Point(12.0898,-5.444, 0)
 
 class Controller:
     '''Driver class for controlling tour guide's hybrid paradigm'''
@@ -26,27 +36,7 @@ class Controller:
         self.sensor = Sensor()
         self.localizer = Localizer()
 
-        ''' TODO: old highlights, remove if needed
-        # Highlight coordinates
-        self.xWestEntrance = -10.5329
-        self.yWestEntrance = -3.8948
-        self.xEastEntrance = 12.3739
-        self.yEastEntrance = -3.7555
-        self.xCsOffice = -6.3712
-        self.yCsOffice = 2.5169
-        self.xAtrium = 3.5468
-        self.yAtrium = -4.2581
-        '''
-
-        # Highlight coordinates based on amcl_pose + rviz
-        self.xWestEntrance = 8.888
-        self.yWestEntrance = 3.4802
-        self.xEastEntrance = 14.7042
-        self.yEastEntrance = -14.4308
-        self.xCsOffice = 15.4548
-        self.yCsOffice = 2.2821
-        self.xAtrium = 10.4148
-        self.yAtrium = -0.9555
+        self.visited_highlights = []
 
         # Boolean for reached goal
         self.goalReached = False
@@ -95,30 +85,107 @@ class Controller:
 
             if self.sensor.is_obstacle_detected():
                 # Rotate Turtlebot accordingly to avoid obstacles
-                self.avoid_obstacle()
+                self.sensor.avoid_obstacle()
             else:
                 # If no obstacles detected, no need to rotate
                 self.motion.halt_rotation()
 
             self.motion.move_forward()
 
-	''' Robot will decide its path/highlights depending on its location'''
-	# TODO: Chris - This will require automation so I have not done it yet
     def tour_guide_mode(self):
+	''' Robot will decide its path/highlights depending on its location'''
         rospy.loginfo("Initializing Tour Guide mode.")
 
-	''' User chooses which highlights to go to'''
+        print(self.localizer.position)
+
+        west_entrance  = Locations.WestEntrance
+        east_entrance  = Locations.EastEntrance
+
+        # TODO: just start at nearest entrance and go down the list
+        if self.get_nearest_entrance(west_entrance, east_entrance) == west_entrance:
+            self.localizer.moveToGoal(Locations.WestEntrance)
+            self.localizer.moveToGoal(Locations.Atrium)
+            self.localizer.moveToGoal(Locations.CSOffice)
+            self.localizer.moveToGoal(Locations.ElectronicsLab)
+            self.localizer.moveToGoal(Locations.ComputerLab)
+            self.localizer.moveToGoal(Locations.EastEntrance)
+        else:
+            self.localizer.moveToGoal(Locations.EastEntrance)
+            self.localizer.moveToGoal(Locations.ComputerLab)
+            self.localizer.moveToGoal(Locations.ElectronicsLab)
+            self.localizer.moveToGoal(Locations.Atrium)
+            self.localizer.moveToGoal(Locations.CSOffice)
+            self.localizer.moveToGoal(Locations.WestEntrance)
+
+
+        '''
+        # Go to that highlight
+        self.moveToGoal(nearest_highlight)
+
+        # Add to "highlights visited"
+        visited_highlights.append(nearest_highlight)
+
+        # Keep going until all highlights are visited
+        while len(visited_highlights) <= 6:
+
+            # Calculate next highlight
+            nearest_highlight = self.get_nearest_highlight()
+
+            # Go to that highlight
+            self.moveToGoal(nearest_highlight)
+
+            # Add to "highlights visited"
+            visited_highlights.append(nearest_highlight)
+
+        '''
+        print("...And that's all! Thank you for participating in the Devon Tour!")
+
+    def get_nearest_entrance(self, west_entrance, east_entrance):
+        west_entrance_distance = self.distance(west_entrance)
+        east_entrance_distance = self.distance(east_entrance)
+
+        print("distance to west entrance = " + str(west_entrance_distance))
+        print("distance to east entrance = " + str(east_entrance_distance))
+
+        if west_entrance_distance < east_entrance_distance:
+            return west_entrance
+        else:
+            return east_entrance
+
+    def distance(self, coordinates):
+        distance = math.sqrt((self.localizer.position.x - coordinates.x)**2 +
+                             (self.localizer.position.y - coordinates.y)**2)
+
+        return distance
+
     def point_to_point_mode(self):
+	''' User chooses which highlights to go to'''
 	choice = self.choose()
 
 	# Depending on which highlight the user chooses, the robot will
 	# move to the goal
         if (choice == 1):
-            self.goalReached = self.moveToGoal(self.xCsOffice, self.yCsOffice)
+            self.goalReached = self.localizer.moveToGoal(Locations.CSOffice)
+            print("We've reached the CS Office, where the CS department mainly"
+                  + " resides")
         elif (choice == 2):
-            self.goalReached = self.moveToGoal(self.xAtrium, self.yAtrium)
+            self.goalReached = self.localizer.moveToGoal(Locations.Atrium)
+            print("Welcome to the Atrium! This area is used for get-togethers,"
+                  + "studying, welcome parties, and more!")
         elif (choice == 3):
-            self.goalReached = self.moveToGoal(self.xEastEntrance, self.yEastEntrance)
+            self.goalReached = self.localizer.moveToGoal(Locations.EastEntrance)
+            print("This is the east entrance")
+        elif (choice == 4):
+            self.goalReached = self.localizer.moveToGoal(Locations.WestEntrance)
+            print("This is the west entrance")
+        elif (choice == 5):
+            self.goalReached = self.localizer.moveToGoal(Locations.ComputerLab)
+            print("Inside this room here is the CS Computer Lab, where any CS"
+                  + " student can come in and use the machines or for TA's office"
+                  + " hours")
+        elif (choice == 6):
+            self.goalReached = self.moveToGoal(Locations.ElectronicsLab)
+            print("In this room is the Electronics Lab.")
 
 	# if choice isn't q and the robot reached its goal
 	if (choice != 'q'):
@@ -132,64 +199,52 @@ class Controller:
 	while choice != 'q':
             choice = self.choose()
             if (choice == 1):
-                self.goalReached = self.moveToGoal(self.xCsOffice, self.yCsOffice)
+                self.goalReached = self.localizer.moveToGoal(Locations.CSOffice)
+                print("We've reached the CS Office, where the CS department mainly"
+                      + " resides")
             elif (choice == 2):
-                self.goalReached = self.moveToGoal(self.xAtrium, self.yAtrium)
+                self.goalReached = self.localizer.moveToGoal(Locations.Atrium)
+                print("Welcome to the Atrium! This area is used for get-togethers,"
+                      + "studying, welcome parties, and more!")
             elif (choice == 3):
-                self.goalReached = self.moveToGoal(self.xEastEntrance, self.yEastEntrance)
+                self.goalReached = self.localizer.moveToGoal(Locations.EastEntrance)
+                print("This is the east entrance")
+            elif (choice == 4):
+                self.goalReached = self.localizer.moveToGoal(Locations.WestEntrance)
+                print("This is the west entrance")
+            elif (choice == 5):
+                self.goalReached = self.localizer.moveToGoal(Locations.ComputerLab)
+                print("Inside this room here is the CS Computer Lab, where any CS"
+                      + " student can come in and use the machines or for TA's office"
+                      + " hours")
+            elif (choice == 6):
+                self.goalReached = self.localizer.moveToGoal(Locations.ElectronicsLab)
+                print("In this room is the Electronics Lab.")
 
 
-	''' User chooses where they would like to start the tour'''
     def choose(self):
+	''' User chooses where they would like to start the tour'''
 	tour = 'q'
         rospy.loginfo("Initializing P2P Guide mode.")
         rospy.loginfo("Press a key to go to the highlights:")
         rospy.loginfo("'1': CS/ECE Office")
         rospy.loginfo("'2': Atrium")
         rospy.loginfo("'3': East Entrance")
+        rospy.loginfo("'4': West Entrance")
+        rospy.loginfo("'5': Computer Lab")
+        rospy.loginfo("'6': Electronics Lab")
         rospy.loginfo("'q': Quit")
 
 	tour = input()
 	return tour
 
-	# TODO: Chris - I copied this from the gaitech "Map-Based Navigation" websitfor inspiration hoping that this code base could miracuously work for our project. I think this could give a head-start on what we'd have to do for P2P at least
-    def moveToGoal(self,xGoal,yGoal):
-
-	#define a client for to send goal requests to the move_base server through a SimpleActionClient
-	ac = actionlib.SimpleActionClient("move_base", MoveBaseAction)
-
-	#wait for the action server to come up
-	while(not ac.wait_for_server(rospy.Duration.from_sec(5.0))):
-		rospy.loginfo("Waiting for the move_base action server to come up")
-
-	goal = MoveBaseGoal()
-
-	#set up the frame parameters
-	goal.target_pose.header.frame_id = "map"
-	goal.target_pose.header.stamp = rospy.Time.now()
-
-	# moving towards the goal*/
-
-	goal.target_pose.pose.position =  Point(xGoal,yGoal,0)
-	goal.target_pose.pose.orientation.x = 0.0
-	goal.target_pose.pose.orientation.y = 0.0
-	goal.target_pose.pose.orientation.z = 0.0
-	goal.target_pose.pose.orientation.w = 1.0
-
-	rospy.loginfo("Sending goal location ...")
-	ac.send_goal(goal)
-
-	ac.wait_for_result(rospy.Duration(60))
-
-	if(ac.get_state() ==  GoalStatus.SUCCEEDED):
-		rospy.loginfo("You have reached the destination")
-		return True
-
-	else:
-		rospy.loginfo("The robot failed to reach the destination")
-		return False
-
-
+    def shutdown(self):
+        '''Shutdown function that's called when user
+           inputs Ctrl + C
+        '''
+        rospy.loginfo("Stopping Turtlebot")
+        self.motion.halt()
+        rospy.sleep(1)          # ensures Turtlebot received the command before
 
     def avoid_obstacle(self):
         '''Checks where a nearby obstacle is and
@@ -208,14 +263,6 @@ class Controller:
         # Check if obstacle is 2 ft to the right
         elif right_laser < 2 * Distance.FOOT:
             self.motion.rotate_left()
-
-    def shutdown(self):
-        '''Shutdown function that's called when user
-           inputs Ctrl + C
-        '''
-        rospy.loginfo("Stopping Turtlebot")
-        self.motion.halt()
-        rospy.sleep(1)          # ensures Turtlebot received the command before
 
 if __name__ == '__main__':
     controller = Controller()

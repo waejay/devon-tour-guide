@@ -6,6 +6,7 @@ from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from motion import Motion
 from sensor import Sensor, Distance
 from localizer import Localizer
+import actionlib
 
 class Controller:
     '''Driver class for controlling tour guide's hybrid paradigm'''
@@ -98,29 +99,30 @@ class Controller:
 
 	# Depending on which highlight the user chooses, the robot will
 	# move to the goal
-	if (choice == 0)
-		self.goalReached = self.moveToGoal(self.xCsOffice, self.yCsOffice)
-	elif (choice == 1)
-		self.goalReached = self.moveToGoal(self.xAtrium, self.yAtrium)
-	elif (choice == 2)
-		self.goalReached = self.moveToGoal(self.xEastEntrance, self.yEastEntrance)
+        if (choice == 0):
+            self.goalReached = self.moveToGoal(self.xCsOffice, self.yCsOffice)
+        elif (choice == 1):
+            self.goalReached = self.moveToGoal(self.xAtrium, self.yAtrium)
+        elif (choice == 2):
+            self.goalReached = self.moveToGoal(self.xEastEntrance, self.yEastEntrance)
+
 	# if choice isn't q and the robot reached its goal
 	if (choice != 'q'):
 		if (self.goalReached):
-			rospy.loginfo("Reached highlight!")
+                    rospy.loginfo("Reached highlight!")
 		# If it fails to reach the goal
-		else: 
-			rospy.loginfo("Couldn't reach the highlight, try again")
+		else:
+                    rospy.loginfo("Couldn't reach the highlight, try again")
 
 		# Loop to keep going until user quits the tour
 	while choice != 'q':
-		choice = self.choose()
-                if (choice == 0):
-                    self.goalReached = self.moveToGoal(self.xCsOffice, self.yCsOffice)
-                elif (choice == 1):
-                    self.goalReached = self.moveToGoal(self.xAtrium, self.yAtrium)
-                elif (choice == 2):
-                    self.goalReached = self.moveToGoal(self.xEastEntrance, self.yEastEntrance)
+            choice = self.choose()
+            if (choice == 0):
+                self.goalReached = self.moveToGoal(self.xCsOffice, self.yCsOffice)
+            elif (choice == 1):
+                self.goalReached = self.moveToGoal(self.xAtrium, self.yAtrium)
+            elif (choice == 2):
+                self.goalReached = self.moveToGoal(self.xEastEntrance, self.yEastEntrance)
 
 
 	''' User chooses where they would like to start the tour'''

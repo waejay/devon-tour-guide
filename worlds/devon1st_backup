@@ -750,6 +750,27 @@
           </surface>
           <max_contacts>10</max_contacts>
         </collision>
+        <collision name='base_footprint_fixed_joint_lump__hokuyo_link_collision_3'>
+          <pose frame=''>0.08 0 0.4402 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.1 0.1 0.1</size>
+            </box>
+          </geometry>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <friction>
+              <ode/>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
         <collision name='base_footprint_fixed_joint_lump__plate_bottom_link_collision_4'>
           <pose frame=''>0 0 0.1408 0 -0 0</pose>
           <geometry>
@@ -1183,6 +1204,21 @@
             </script>
           </material>
         </visual>
+        <visual name='base_footprint_fixed_joint_lump__hokuyo_link_visual_1'>
+          <pose frame=''>0.08 0 0.4402 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/opt/ros/kinetic/share/turtlebot_description/meshes/sensors/hokuyo.dae</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>__default__</uri>
+              <name>__default__</name>
+            </script>
+          </material>
+        </visual>
         <visual name='base_footprint_fixed_joint_lump__plate_bottom_link_visual_2'>
           <pose frame=''>0.02364 0 0.1408 0 -0 0</pose>
           <geometry>
@@ -1512,6 +1548,41 @@
         <gravity>1</gravity>
         <velocity_decay/>
         <self_collide>0</self_collide>
+        <sensor name='head_hokuyo_sensor' type='ray'>
+          <visualize>1</visualize>
+          <update_rate>40</update_rate>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>360</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.5708</min_angle>
+                <max_angle>1.5708</max_angle>
+              </horizontal>
+              <vertical>
+                <samples>1</samples>
+                <min_angle>0</min_angle>
+                <max_angle>0</max_angle>
+              </vertical>
+            </scan>
+            <range>
+              <min>0.2</min>
+              <max>30</max>
+              <resolution>0.01</resolution>
+            </range>
+            <noise>
+              <type>gaussian</type>
+              <mean>0</mean>
+              <stddev>0.01</stddev>
+            </noise>
+          </ray>
+          <plugin name='gazebo_ros_head_hokuyo_controller' filename='libgazebo_ros_laser.so'>
+            <topicName>laserscan</topicName>
+            <frameName>hokuyo_link</frameName>
+            <robotNamespace>/</robotNamespace>
+          </plugin>
+          <pose frame=''>0.08 0 0.4402 0 -0 0</pose>
+        </sensor>
         <kinematic>0</kinematic>
       </link>
       <link name='wheel_left_link'>

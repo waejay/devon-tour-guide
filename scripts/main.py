@@ -10,8 +10,6 @@ from localizer import Localizer
 class Controller:
     '''Driver class for controlling tour guide's hybrid paradigm'''
 
-	
-
     def __init__(self):
 
         # Initialize ROS node
@@ -40,8 +38,7 @@ class Controller:
 
     def start(self):
         rospy.loginfo("Starting Tour Guide..")
-		
-		begin = 'q'
+        begin = 'q'
 
         # Note: the Motion, Sensor, and Localizer classes
         # seem to take a second to fully initialize so we give
@@ -68,11 +65,10 @@ class Controller:
 	rospy.loginfo("'2': Regular Tour")
 	begin = input()
 
-	if (begin == 1)
+        if (begin == 1):
 		self.point_to_point_mode()
-	elif (begin == 2)
+        elif (begin == 2):
 		self.tour_guide_mode()
-		
 
     def idle_mode(self):
         '''Make Turtlebot move around aimlessly
@@ -98,7 +94,7 @@ class Controller:
 
 	''' User chooses which highlights to go to'''
     def point_to_point_mode(self):
-	choice = self.choose()	
+	choice = self.choose()
 
 	# Depending on which highlight the user chooses, the robot will
 	# move to the goal
@@ -119,12 +115,12 @@ class Controller:
 		# Loop to keep going until user quits the tour
 	while choice != 'q':
 		choice = self.choose()
-		if (choice == 0)
-       		   	self.goalReached = self.moveToGoal(self.xCsOffice, self.yCsOffice)
-       	 	elif (choice == 1)
-       	    		self.goalReached = self.moveToGoal(self.xAtrium, self.yAtrium)
-       	 	elif (choice == 2)
-           		self.goalReached = self.moveToGoal(self.xEastEntrance, self.yEastEntrance)
+                if (choice == 0):
+                    self.goalReached = self.moveToGoal(self.xCsOffice, self.yCsOffice)
+                elif (choice == 1):
+                    self.goalReached = self.moveToGoal(self.xAtrium, self.yAtrium)
+                elif (choice == 2):
+                    self.goalReached = self.moveToGoal(self.xEastEntrance, self.yEastEntrance)
 
 
 	''' User chooses where they would like to start the tour'''
@@ -136,7 +132,7 @@ class Controller:
         rospy.loginfo("'2': Atrium")
         rospy.loginfo("'3': East Entrance")
         rospy.loginfo("'q': Quit")
-		
+
 	tour = input()
 	return tour
 
@@ -149,7 +145,7 @@ class Controller:
 	#wait for the action server to come up
 	while(not ac.wait_for_server(rospy.Duration.from_sec(5.0))):
 		rospy.loginfo("Waiting for the move_base action server to come up")
-	
+
 	goal = MoveBaseGoal()
 
 	#set up the frame parameters
@@ -170,7 +166,7 @@ class Controller:
 	ac.wait_for_result(rospy.Duration(60))
 
 	if(ac.get_state() ==  GoalStatus.SUCCEEDED):
-		rospy.loginfo("You have reached the destination")	
+		rospy.loginfo("You have reached the destination")
 		return True
 
 	else:

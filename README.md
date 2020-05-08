@@ -22,7 +22,7 @@ serve the main functions of the P2P guide and Tour guide. These commands are
 (in order):
 
 - `roslaunch turtlebot_gazebo turtlebot_world.launch
-  world_file:=~/$PATH_TO/devon_tour_guide/worlds`
+  world_file:=~/$PATH_TO/devon_tour_guide/worlds/devon1st.world`
 - `roslaunch turtlebot_gazebo amcl_demo.launch
   map_file:=/$PATH_TO/devon_tour_guide/buildings/devon_v2.yaml`
 - `roslaunch turtlebot_rviz_launchers view_navigation.launch` 

@@ -1,9 +1,23 @@
 <launch>
-	<arg name="base"	value="$(optenv TURTLEBOT_BASE kobuki)"/>
-	<arg name="stacks"    value="$(optenv TURTLEBOT_STACKS hexagons)"/>  <!-- circles, hexagons -->
-	<arg name="3d_sensor" value="$(optenv TURTLEBOT_3D_SENSOR kinect)"/>
+    <arg name="3d_sensor" value="$(optenv TURTLEBOT_3D_SENSOR asus_xtion_pro)"/>
 
-	<arg name="map_file" 	default=" $(find devon-tour-guide)/src/buildings/devon_v2.yaml"/>
-	<arg name="world_file"	default=" $(find devon-tour-guide)/src/worlds/devon1st.world"/>
+    <arg name="map_file" 	default=" $(find devon_tour_guide)/buildings/devon_v2.yaml"/>
+    <arg name="world_file"	default=" $(find devon_tour_guide)/worlds/devon1st.world"/>
+
+    <include file="$(find turtlebot_gazebo)/launch/turtlebot_world.launch">
+        <arg name="world_file" value="$(arg world_file)"/>
+    </include>
+
+
+    <include file="$(find turtlebot_gazebo)/launch/amcl_demo.launch">
+        <arg name="map_file" value="$(arg map_file)"/>
+    </include>
+
+    <include file="$(find turtlebot_rviz_launchers)/launch/view_navigation.launch">
+    </include>
+
+    <node pkg="devon_tour_guide" type="main.py" name="Controller"
+    output="screen"></node>
+
 </launch>
 	
